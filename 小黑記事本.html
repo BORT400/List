@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記事本</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #app {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .new-todo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .new-todo {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 16px;
+            border: 2px solid #71c9ce;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-right: 10px;
+        }
+
+        .add {
+            padding: 8px 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #71c9ce;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .main {
+            margin-bottom: 20px;
+        }
+
+        .todo-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .todo {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+        }
+
+        .index {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .view {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .view label {
+            margin: 0;
+        }
+
+        .destroy {
+            padding: 4px 8px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            background-color: #ccc;
+            color: #fff;
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .todo:hover .destroy {
+            opacity: 1;
+        }
+
+        .footer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .todo-count {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .clear-completed {
+            padding: 4px 8px;
+            font-size: 14px;
+            border: none;
+            background-color: #fff;
+            color: #777;
+            cursor: pointer;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 480px) {
+            .new-todo-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .new-todo {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.10/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 輸入框 -->
+        <h1 class="title">小黑記事本</h1>
+        <div class="new-todo-container">
+            <input v-model="todoName" placeholder="請輸入任務" class="new-todo">
+            <button @click="add" class="add">添加清單</button>
+        </div>
+
+        <!-- 列表區域 -->
+        <section class="main">
+            <ul class="todo-list">
+                <li class="todo" v-for="(item, index) in list" :key="item.id">
+                    <div class="view">
+                        <span class="index">{{ index+1 }}.</span>
+                        <label>{{ item.name }}</label>
+                        <button @click="del(item.id)" class="destroy">刪除</button>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- 統計與清空，如果沒有任務底部要隱藏 -->
+        <footer class="footer" v-show="list.length>0">
+            <!-- 統計 -->
+            <span class="todo-count">
+                合計: <strong>{{ list.length }}</strong>
+            </span>
+            <!-- 清空 -->
+            <button @click="clear" class="clear-completed">
+                清空任務
+            </button>
+        </footer>
+    </div>
+</body>
+
+<script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            todoName: '',
+            list: [
+                { id: 1, name: '跑步鍛鍊20分鐘' },
+                { id: 2, name: '跳繩鍛鍊20分鐘' },
+            ]
+        },
+        methods: {
+            // 刪除任務清單
+            del(id) {
+                this.list = this.list.filter(item => item.id !== id)
+            },
+            add() {
+                if (this.todoName.trim() === '') {
+                    alert('請輸入任務名稱')
+                    return
+                }
+                this.list.unshift({
+                    id: new Date(),
+                    name: this.todoName
+                })
+                this.todoName = ''
+            },
+            clear() {
+                this.list = []
+            }
+        },
+    })
+</script>
+
+</html>
